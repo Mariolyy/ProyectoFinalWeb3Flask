@@ -19,3 +19,5 @@ En Windows
 
 ### INICIA EL PROYECTO
             python app.py
+
+### nueva version jueves
