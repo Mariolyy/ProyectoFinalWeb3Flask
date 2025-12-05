@@ -39,4 +39,8 @@
     .btn-primary:hover {
       background-color: #6a11cb;
     }
+
+    .form-agregar-proyecto {
+      margin: 5rem;
+    }
   
