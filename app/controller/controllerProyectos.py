@@ -14,9 +14,9 @@ def listaProyecto():
                 t.fecha_inicio,
                 t.fecha_fin,
                 et.nombre as estado_tarea
-        from tareas t
-        join proyectos p on p.id = t.proyecto_id
-        join estadostarea et on et.id = t.estado_id
+        from proyectos p 
+        left join tareas t on p.id = t.proyecto_id
+        left join estadostarea et on et.id = t.estado_id;
     """
     cur.execute(querySQL)
     resultadoBusqueda = cur.fetchall()  # fetchall() Obtener todos los registros
@@ -26,13 +26,12 @@ def listaProyecto():
     conexion_MySQLdb.close()
     return resultadoBusqueda
 
-"""
-def insertarProyecto(nombre=''):
+def insertarProyecto(nombre='', ubicacion='', estado=''):
     conexion_MySQLdb = connectionBD()
     cursor = conexion_MySQLdb.cursor(dictionary=True)
 
-    sql = ("INSERT INTO estadostarea(nombre) VALUES (%s)")
-    valores = (nombre)
+    sql = ("INSERT INTO proyectos(nombre, ubicacion, cliente_id, tipo_proyecto_id) VALUES (%s, %s, %s, %s)")
+    valores = (nombre, ubicacion, 1, 1)
     cursor.execute(sql, valores)
     conexion_MySQLdb.commit()
     cursor.close()
@@ -41,7 +40,6 @@ def insertarProyecto(nombre=''):
     resultado_insert = cursor.rowcount  # Retorna 1 o 0
     ultimo_id = cursor.lastrowid  # Retorna el id del último registro
     return resultado_insert
-"""
 
 def selectProyecto(id):
     conexion_MySQLdb = connectionBD()

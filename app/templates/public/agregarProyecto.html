@@ -6,61 +6,40 @@
     <section>
         <h4>Datos para proyecto nuevo</h4>
         <hr>
-        <form class="row gy-2 gx-3 align-items-center form-agregar-proyecto">
+        <form action="{{ url_for('agregarProyecto') }}" method="POST" class="row gy-2 gx-3 align-items-center m-2 p-5 border-2 bg-light border border-2 rounded-4 shadow">
             <div class="row">
                 <div class="col col-lg-3">
-                  <label for="autoSizingInput">Nombre</label>
-                  <input type="text" class="form-control" id="autoSizingInput">
+                  <label for="nombre_proyecto">Nombre</label>
+                  <input type="text" class="form-control border-success" id="nombre_proyecto" name="nombre_proyecto">
                 </div>
                 <div class="col col-lg-3">
-                    <label for="autoSizingInputGroup">Ubicación</label>
-                    <input type="text" class="form-control" id="autoSizingInputGroup">
+                    <label for="ubicacion_proyecto">Ubicación</label>
+                    <input type="text" class="form-control border-success" id="ubicacion_proyecto" name="ubicacion_proyecto">
                 </div>
                 <div class="col col-lg-3">
-                  <label for="autoSizingSelect">Preference</label>
-                  <select class="form-select" id="autoSizingSelect">
-                    <option selected>Choose...</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                  <label for="estado-proyecto">Estado de proyecto</label>
+                  <select class="form-select border-success" id="estado_proyecto" name="estado_proyecto">
+                    <option selected>Estado</option>
+                    <option value="1">TERMINADO</option>
+                    <option value="2">EN PROCESO</option>
                   </select>
                 </div>
             </div>
+            <div class="row">
+                <div class="col col-lg-3">
+                    <label for="fecha_inicio">Fecha de inicio</label>
+                    <input type="date" class="form-control border-success" id="fecha_inicio" name="fecha_inicio">
+                </div>
+                <div class="col col-lg-3">
+                    <label for="fecha_fin">Fecha de fin</label>
+                    <input type="date" class="form-control border-success" id="fecha_fin" name="fecha_fin">
+                </div>
+            </div>
             <div class="col">
-              <button type="submit" class="btn btn-primary">Registrar</button>
+              <button type="submit" class="btn btn-success">Registrar</button>
             </div>
           </form>
 
-        <hr>
-        <form action="" method="POST" class="mb-3" autocomplete="off" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" required>
-                </div>
-                <div class="col">
-                    <label for="procedencia">Procedencia</label>
-                    <input type="text" name="procedencia" class="form-control" required>
-                </div>
-            </div>
-    
-            <div class="row">
-                <div class="col">
-                    <label for="receta">Receta</label>
-                    <textarea name="receta" class="form-control" required></textarea>
-                </div>
-            </div>
-    
-            <div class="row mt-4">
-                <div class="col">
-                    <label for="foto">Foto del Plato</label>
-                    <input type="file" name="foto" class="form-control-file" accept="image/*" required>
-                </div>
-            </div>
-            <hr>
-    
-            <input class="button-primary mt-3 btn btn-info btn-block bold" type="submit" value="Guardar Registro">
-        </form>
     </section>
 
 {% endblock %}

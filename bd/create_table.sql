@@ -37,3 +37,20 @@ CREATE TABLE Tareas (
         FOREIGN KEY (estado_id) REFERENCES EstadosTarea(id)
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
+
+insert into estadostarea(id, nombre) VALUES(1, 'TERMINADO'); 
+insert into estadostarea(id, nombre) VALUES(2, 'EN PROCESO'); 
+insert into estadostarea(id, nombre) VALUES(3, 'ELIMINADO'); 
+
+insert into TiposProyecto(id, nombre) values(1, 'GRANDE');
+insert into TiposProyecto(id, nombre) values(2, 'MEDIANO');
+insert into TiposProyecto(id, nombre) values(3, 'PEQUEÑO');
+
+insert into Proyectos(id, nombre, ubicacion, cliente_id, tipo_proyecto_id) 
+values(1, 'Mall Gran via', 'Zona San Pedro, calle D', 1, 1);
+
+insert into Tareas (id, proyecto_id, nombre, fecha_inicio, fecha_fin, estado_id)
+values(1, 1, 'Muro de contencion', date('2025-01-01'), date('2025-05-10'), 1);
+insert into Tareas (id, proyecto_id, nombre, fecha_inicio, fecha_fin, estado_id)
+values(2, 1, 'Muro perimetral', date('2025-02-10'), date('2025-03-10'), 1);
