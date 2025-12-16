@@ -1,37 +1,145 @@
 {% extends 'public/layout.html' %}
-{% block title %}Lista de tareas{% endblock %}
 
+{% block title %}Estados de Tarea{% endblock %}
 
-{% block listatareas %}
-
-
-    <h1>Listado de tareas</h1>
-
-    <!-- {{ miData }} -->
-    {% if (miData) %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">Nombre</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dato in miData %}
-                <tr id="Registro_{{ dato.id }}">
-                    <th scope="row">{{ loop.index }}</th>
-                    <td>{{ dato.nombre }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+{% block content %}
+<div class="container">
+    <!-- Encabezado -->
+    <div class="mb-5 text-center">
+        <h1 class="display-5 fw-bold">
+            <i class="fas fa-flag text-primary me-2"></i>Estados de Tarea
+        </h1>
+        <p class="lead text-muted">
+            Configuración y gestión de los estados disponibles para las tareas
+        </p>
     </div>
-    {% else %}
-    <div class="row mb-5">
+
+    <!-- Tarjetas de Estados -->
+    <div class="row">
+        {% for estado in estados %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <!-- Icono según estado -->
+                    {% if estado.nombre == 'Pendiente' %}
+                    <div class="state-icon bg-warning bg-opacity-10 text-warning rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-clock fa-3x"></i>
+                    </div>
+                    {% elif estado.nombre == 'En Progreso' %}
+                    <div class="state-icon bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-spinner fa-3x"></i>
+                    </div>
+                    {% elif estado.nombre == 'Completada' %}
+                    <div class="state-icon bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-check-circle fa-3x"></i>
+                    </div>
+                    {% elif estado.nombre == 'Atrasada' %}
+                    <div class="state-icon bg-danger bg-opacity-10 text-danger rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-exclamation-triangle fa-3x"></i>
+                    </div>
+                    {% else %}
+                    <div class="state-icon bg-secondary bg-opacity-10 text-secondary rounded-circle mx-auto mb-3" 
+                         style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-flag fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Nombre del estado -->
+                    <h5 class="card-title fw-bold">{{ estado.nombre }}</h5>
+                    
+                    <!-- Descripción -->
+                    <p class="card-text text-muted small">
+                        {{ estado.descripcion }}
+                    </p>
+                    
+                    <!-- Badge de color -->
+                    <span class="badge bg-{{ estado.color }} mb-3">
+                        Color: {{ estado.color|title }}
+                    </span>
+                    
+                    <!-- ID del estado -->
+                    <div class="mt-3">
+                        <small class="text-muted">ID: {{ estado.id }}</small>
+                    </div>
+                </div>
+                
+                <!-- Acciones -->
+                <div class="card-footer bg-white border-top-0 pt-0">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-1"></i>Editar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mt-5">
         <div class="col-md-12">
-            <h3 class="text-center">No hay Platos</h3>
+            <div class="card shadow">
+                <div class="card-header bg-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Distribución por Estado
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <!-- Gráfico simple -->
+                            <div class="progress-stacked mb-3">
+                                <div class="progress" style="width: 25%">
+                                    <div class="progress-bar bg-warning" role="progressbar">
+                                        Pendiente (25%)
+                                    </div>
+                                </div>
+                                <div class="progress" style="width: 40%">
+                                    <div class="progress-bar bg-primary" role="progressbar">
+                                        En Progreso (40%)
+                                    </div>
+                                </div>
+                                <div class="progress" style="width: 25%">
+                                    <div class="progress-bar bg-success" role="progressbar">
+                                        Completada (25%)
+                                    </div>
+                                </div>
+                                <div class="progress" style="width: 10%">
+                                    <div class="progress-bar bg-danger" role="progressbar">
+                                        Atrasada (10%)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h3 class="fw-bold">{{ total }}</h3>
+                                <p class="text-muted mb-0">Estados Configurados</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
+
+    <!-- Información -->
+    <div class="alert alert-info mt-4">
+        <div class="d-flex">
+            <i class="fas fa-info-circle fa-2x me-3"></i>
+            <div>
+                <h5 class="alert-heading">Sobre los Estados</h5>
+                <p class="mb-0">
+                    Los estados definen el progreso de cada tarea. Puedes personalizar los colores, 
+                    nombres y orden de los estados según las necesidades de tu proyecto.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

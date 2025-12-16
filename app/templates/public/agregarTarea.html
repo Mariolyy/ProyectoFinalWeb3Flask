@@ -1,0 +1,158 @@
+{% extends 'public/layout.html' %}
+
+{% block title %}Agregar Tarea{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Encabezado -->
+            <div class="mb-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('inicio') }}">Inicio</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('listar_tareas') }}">Tareas</a>
+                        </li>
+                        <li class="breadcrumb-item active">Agregar Tarea</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="h2 fw-bold">
+                    <i class="fas fa-plus-square text-success me-2"></i>Agregar Nueva Tarea
+                </h1>
+                <p class="text-muted">
+                    Registra una nueva tarea para alguno de tus proyectos
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('agregar_tarea') }}">
+                        <!-- Proyecto -->
+                        <div class="mb-4">
+                            <label for="proyecto_id" class="form-label fw-bold">
+                                <i class="fas fa-building me-1 text-primary"></i>
+                                Proyecto *
+                            </label>
+                            <select class="form-select form-select-lg" 
+                                    id="proyecto_id" 
+                                    name="proyecto_id"
+                                    required>
+                                <option value="" selected disabled>Selecciona un proyecto</option>
+                                {% for proyecto in proyectos %}
+                                <option value="{{ proyecto.id }}">{{ proyecto.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Nombre de Tarea -->
+                        <div class="mb-4">
+                            <label for="nombre" class="form-label fw-bold">
+                                <i class="fas fa-tasks me-1 text-success"></i>
+                                Nombre de la Tarea *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="nombre" 
+                                   name="nombre"
+                                   placeholder="Ej: Cimentación, Instalación eléctrica, etc."
+                                   required>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-4">
+                            <label for="descripcion" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>
+                                Descripción
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="4"
+                                      placeholder="Describe en detalle la tarea a realizar..."></textarea>
+                        </div>
+
+                        <!-- Fechas -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="fecha_inicio" class="form-label fw-bold">
+                                    <i class="fas fa-calendar-plus me-1 text-success"></i>
+                                    Fecha Inicio *
+                                </label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="fecha_inicio" 
+                                       name="fecha_inicio"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fecha_fin" class="form-label fw-bold">
+                                    <i class="fas fa-calendar-check me-1 text-warning"></i>
+                                    Fecha Fin Estimada *
+                                </label>
+                                <input type="date" 
+                                       class="form-control" 
+                                       id="fecha_fin" 
+                                       name="fecha_fin"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Estado y Prioridad -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="estado_id" class="form-label fw-bold">
+                                    Estado Inicial
+                                </label>
+                                <select class="form-select" id="estado_id" name="estado_id">
+                                    {% for estado in estados %}
+                                    <option value="{{ estado }}">{{ estado }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="prioridad" class="form-label fw-bold">
+                                    Prioridad
+                                </label>
+                                <select class="form-select" id="prioridad" name="prioridad">
+                                    {% for prioridad in prioridades %}
+                                    <option value="{{ prioridad }}">{{ prioridad }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Responsable -->
+                        <div class="mb-4">
+                            <label for="responsable" class="form-label fw-bold">
+                                <i class="fas fa-user-hard-hat me-1"></i>
+                                Responsable
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="responsable" 
+                                   name="responsable"
+                                   placeholder="Nombre del ingeniero o supervisor">
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between pt-4 border-top">
+                            <a href="{{ url_for('listar_tareas') }}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fas fa-save me-2"></i>Guardar Tarea
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

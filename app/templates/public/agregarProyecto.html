@@ -1,66 +1,132 @@
 {% extends 'public/layout.html' %}
-{% block title %}Registrar Proyectos{% endblock %}
 
-{% block agregarproyecto %}
+{% block title %}Agregar Proyecto{% endblock %}
 
-    <section>
-        <h4>Datos para proyecto nuevo</h4>
-        <hr>
-        <form class="row gy-2 gx-3 align-items-center form-agregar-proyecto">
-            <div class="row">
-                <div class="col col-lg-3">
-                  <label for="autoSizingInput">Nombre</label>
-                  <input type="text" class="form-control" id="autoSizingInput">
-                </div>
-                <div class="col col-lg-3">
-                    <label for="autoSizingInputGroup">Ubicación</label>
-                    <input type="text" class="form-control" id="autoSizingInputGroup">
-                </div>
-                <div class="col col-lg-3">
-                  <label for="autoSizingSelect">Preference</label>
-                  <select class="form-select" id="autoSizingSelect">
-                    <option selected>Choose...</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                  </select>
-                </div>
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Encabezado -->
+            <div class="mb-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('inicio') }}">Inicio</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('listar_proyectos') }}">Proyectos</a>
+                        </li>
+                        <li class="breadcrumb-item active">Agregar Proyecto</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="h2 fw-bold">
+                    <i class="fas fa-plus-circle text-success me-2"></i>Agregar Nuevo Proyecto
+                </h1>
+                <p class="text-muted">
+                    Completa el formulario para registrar un nuevo proyecto
+                </p>
             </div>
-            <div class="col">
-              <button type="submit" class="btn btn-primary">Registrar</button>
-            </div>
-          </form>
 
-        <hr>
-        <form action="" method="POST" class="mb-3" autocomplete="off" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" name="nombre" class="form-control" required>
-                </div>
-                <div class="col">
-                    <label for="procedencia">Procedencia</label>
-                    <input type="text" name="procedencia" class="form-control" required>
-                </div>
-            </div>
-    
-            <div class="row">
-                <div class="col">
-                    <label for="receta">Receta</label>
-                    <textarea name="receta" class="form-control" required></textarea>
-                </div>
-            </div>
-    
-            <div class="row mt-4">
-                <div class="col">
-                    <label for="foto">Foto del Plato</label>
-                    <input type="file" name="foto" class="form-control-file" accept="image/*" required>
-                </div>
-            </div>
-            <hr>
-    
-            <input class="button-primary mt-3 btn btn-info btn-block bold" type="submit" value="Guardar Registro">
-        </form>
-    </section>
+            <!-- Formulario -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('agregar_proyecto') }}">
+                        <!-- Nombre -->
+                        <div class="mb-4">
+                            <label for="nombre" class="form-label fw-bold">
+                                <i class="fas fa-building me-1 text-primary"></i>
+                                Nombre del Proyecto *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="nombre" 
+                                   name="nombre"
+                                   placeholder="Ej: Edificio Residencial"
+                                   required>
+                            <div class="form-text">
+                                Ingresa un nombre descriptivo
+                            </div>
+                        </div>
 
+                        <!-- Ubicación -->
+                        <div class="mb-4">
+                            <label for="ubicacion" class="form-label fw-bold">
+                                <i class="fas fa-map-marker-alt me-1 text-danger"></i>
+                                Ubicación *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="ubicacion" 
+                                   name="ubicacion"
+                                   placeholder="Ej: Calle Principal #123"
+                                   required>
+                            <div class="form-text">
+                                Dirección exacta del proyecto
+                            </div>
+                        </div>
+
+                        <!-- Tipo de Proyecto -->
+                        <div class="mb-4">
+                            <label for="tipo_proyecto" class="form-label fw-bold">
+                                <i class="fas fa-tags me-1 text-info"></i>
+                                Tipo de Proyecto *
+                            </label>
+                            <select class="form-select form-select-lg" 
+                                    id="tipo_proyecto" 
+                                    name="tipo_proyecto"
+                                    required>
+                                <option value="" selected disabled>Selecciona un tipo</option>
+                                {% for tipo in tipos_proyecto %}
+                                <option value="{{ tipo }}">{{ tipo }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text">
+                                Clasificación del proyecto
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-4">
+                            <label for="descripcion" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>
+                                Descripción (Opcional)
+                            </label>
+                            <textarea class="form-control" 
+                                      id="descripcion" 
+                                      name="descripcion" 
+                                      rows="3"
+                                      placeholder="Detalles adicionales..."></textarea>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-between pt-3">
+                            <a href="{{ url_for('listar_proyectos') }}" 
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-5">
+                                <i class="fas fa-save me-2"></i>Guardar Proyecto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información -->
+            <div class="alert alert-info mt-4">
+                <div class="d-flex">
+                    <i class="fas fa-info-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading">Importante</h5>
+                        <p class="mb-0">
+                            Los campos marcados con * son obligatorios. 
+                            El proyecto se guardará en la base de datos MySQL.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
