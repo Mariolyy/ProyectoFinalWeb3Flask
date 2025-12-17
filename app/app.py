@@ -16,7 +16,7 @@ app.secret_key = 'clave_secreta_construccion_2024'
 
 # Intenta importar los controladores
 try:
-    from controllerProyectos import listaProyecto, insertarProyecto, obtenerTiposProyecto
+    from controllerProyectos import listaProyecto, insertarProyecto, obtenerTiposProyecto, obtenerProyectoPorId, actualizarProyecto, eliminarProyecto
     print("✅ Controladores importados correctamente")
 except ImportError as e:
     print(f"⚠️ Error importando controladores: {e}")
@@ -36,7 +36,8 @@ except ImportError as e:
 @app.route('/')
 def inicio():
     """Página de inicio"""
-    return render_template('public/index.html')
+    proyectos = listaProyecto()
+    return render_template('public/index.html', proyectos=proyectos)
 
 # ==================== RUTAS PARA PROYECTOS ====================
 
@@ -77,7 +78,7 @@ def agregar_proyecto():
             # Obtener datos del formulario
             nombre = request.form.get('nombre', '').strip()
             ubicacion = request.form.get('ubicacion', '').strip()
-            tipo_proyecto = request.form.get('tipo_proyecto', 'Residencial')
+            tipo_id = request.form.get('tipo_proyecto', 1, type=int)  # Ahora recibe el ID directamente
             
             # Validar
             if not nombre:
@@ -88,16 +89,7 @@ def agregar_proyecto():
                 flash('❌ La ubicación es requerida', 'danger')
                 return redirect(url_for('agregar_proyecto'))
             
-            # Obtener ID del tipo
-            tipos = obtenerTiposProyecto()
-            tipo_id = 1  # Por defecto
-            
-            for tipo in tipos:
-                if tipo['nombre'] == tipo_proyecto:
-                    tipo_id = tipo['id']
-                    break
-            
-            # Insertar en BD
+            # Insertar en BD (tipo_id ya viene del formulario)
             nuevo_id = insertarProyecto(nombre, ubicacion, tipo_id)
             
             if nuevo_id > 0:
@@ -111,21 +103,78 @@ def agregar_proyecto():
     
     # GET: Mostrar formulario
     tipos = obtenerTiposProyecto()
-    tipos_nombres = [tipo['nombre'] for tipo in tipos]
     
     return render_template('public/agregarProyecto.html', 
-                         tipos_proyecto=tipos_nombres)
+                         tipos_proyecto=tipos)
 
-@app.route('/proyectos/editar/<int:id>')
+@app.route('/proyectos/editar/<int:id>', methods=['GET', 'POST'])
 def editar_proyecto(id):
     """Edita un proyecto"""
-    flash(f'📝 Editar proyecto ID {id}', 'info')
-    return redirect(url_for('listar_proyectos'))
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            nombre = request.form.get('nombre', '').strip()
+            ubicacion = request.form.get('ubicacion', '').strip()
+            tipo_proyecto = request.form.get('tipo_proyecto', 'Residencial')
+            
+            # Validar
+            if not nombre:
+                flash('❌ El nombre es requerido', 'danger')
+                return redirect(url_for('editar_proyecto', id=id))
+            
+            if not ubicacion:
+                flash('❌ La ubicación es requerida', 'danger')
+                return redirect(url_for('editar_proyecto', id=id))
+            
+            # Obtener ID del tipo
+            tipos = obtenerTiposProyecto()
+            tipo_id = 1  # Por defecto
+            
+            for tipo in tipos:
+                if tipo['nombre'] == tipo_proyecto:
+                    tipo_id = tipo['id']
+                    break
+            
+            # Actualizar en BD
+            resultado = actualizarProyecto(id, nombre, ubicacion, tipo_id)
+            
+            if resultado:
+                flash(f'✅ Proyecto "{nombre}" actualizado correctamente', 'success')
+                return redirect(url_for('listar_proyectos'))
+            else:
+                flash('❌ Error al actualizar el proyecto', 'danger')
+                
+        except Exception as e:
+            flash(f'❌ Error: {str(e)}', 'danger')
+    
+    # GET: Mostrar formulario con datos del proyecto
+    proyecto = obtenerProyectoPorId(id)
+    
+    if not proyecto:
+        flash('❌ Proyecto no encontrado', 'danger')
+        return redirect(url_for('listar_proyectos'))
+    
+    tipos = obtenerTiposProyecto()
+    tipos_nombres = [tipo['nombre'] for tipo in tipos]
+    
+    return render_template('public/editarProyecto.html', 
+                         proyecto=proyecto,
+                         tipos_proyecto=tipos_nombres)
 
 @app.route('/proyectos/eliminar/<int:id>')
 def eliminar_proyecto(id):
     """Elimina un proyecto"""
-    flash(f'🗑️ Proyecto ID {id} eliminado', 'success')
+    try:
+        resultado = eliminarProyecto(id)
+        
+        if resultado:
+            flash(f'🗑️ Proyecto ID {id} eliminado correctamente', 'success')
+        else:
+            flash(f'❌ No se pudo eliminar el proyecto ID {id}', 'danger')
+            
+    except Exception as e:
+        flash(f'❌ Error al eliminar: {str(e)}', 'danger')
+    
     return redirect(url_for('listar_proyectos'))
 
 # ==================== RUTAS PARA TAREAS ====================

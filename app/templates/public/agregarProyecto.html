@@ -78,7 +78,7 @@
                                     required>
                                 <option value="" selected disabled>Selecciona un tipo</option>
                                 {% for tipo in tipos_proyecto %}
-                                <option value="{{ tipo }}">{{ tipo }}</option>
+                                <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
                                 {% endfor %}
                             </select>
                             <div class="form-text">

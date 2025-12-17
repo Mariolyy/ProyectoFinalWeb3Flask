@@ -22,8 +22,8 @@ def listaProyecto():
             IFNULL(tp.nombre, 'Sin tipo') as tipo_proyecto,
             'En Progreso' as estado
         FROM proyectos p
-        LEFT JOIN tipos_proyecto tp ON p.tipo_id = tp.id
-        ORDER BY p.id DESC
+        LEFT JOIN tiposproyecto tp ON p.id = tp.id
+        ORDER BY p.id DESC;
         """
         
         cursor.execute(sql)
@@ -55,16 +55,15 @@ def obtenerTiposProyecto():
         
         cursor = conexion.cursor(dictionary=True)
         
-        # Tu tabla se llama 'tipos_proyecto'
-        cursor.execute("SELECT id, nombre FROM tipos_proyecto ORDER BY nombre")
+        # Tu tabla se llama 'tiposproyecto'
+        cursor.execute("SELECT id, nombre FROM tiposproyecto ORDER BY nombre")
         resultados = cursor.fetchall()
         
         if not resultados:
             resultados = [
-                {"id": 1, "nombre": "Residencial"},
-                {"id": 2, "nombre": "Comercial"},
-                {"id": 3, "nombre": "Industrial"},
-                {"id": 4, "nombre": "Infraestructura"}
+                {"id": 1, "nombre": "GRANDE"},
+                {"id": 2, "nombre": "MEDIANO"},
+                {"id": 3, "nombre": "PEQUEÑO"}
             ]
         
         return resultados
@@ -100,7 +99,7 @@ def insertarProyecto(nombre, ubicacion, tipo_id=1, cliente_id=1):
         
         # INSERT para TU estructura
         sql = """
-        INSERT INTO proyectos (nombre, ubicacion, tipo_id, cliente_id) 
+        INSERT INTO proyectos (nombre, ubicacion, tipo_proyecto_id, cliente_id)
         VALUES (%s, %s, %s, %s)
         """
         valores = (nombre, ubicacion, tipo_id, cliente_id)
@@ -116,6 +115,127 @@ def insertarProyecto(nombre, ubicacion, tipo_id=1, cliente_id=1):
     except Exception as e:
         print(f"❌ Error al insertar: {e}")
         return 0
+    finally:
+        try:
+            if 'cursor' in locals():
+                cursor.close()
+            if conexion and conexion.is_connected():
+                conexion.close()
+        except:
+            pass
+
+def obtenerProyectoPorId(id):
+    """
+    Obtiene un proyecto específico por su ID
+    """
+    try:
+        conexion = connectionBD()
+        if not conexion:
+            print("⚠️ No hay conexión a BD")
+            return None
+        
+        cursor = conexion.cursor(dictionary=True)
+        
+        sql = """
+        SELECT 
+            p.id,
+            p.nombre,
+            p.ubicacion,
+            p.id,
+            IFNULL(tp.nombre, 'Sin tipo') as tipo_proyecto,
+            '' as descripcion,
+            'En Progreso' as estado
+        FROM proyectos p
+        LEFT JOIN tiposproyecto tp ON p.id = tp.id
+        WHERE p.id = %s
+        """
+        
+        cursor.execute(sql, (id,))
+        resultado = cursor.fetchone()
+        
+        if resultado:
+            print(f"✅ Proyecto ID {id} encontrado")
+        else:
+            print(f"⚠️ Proyecto ID {id} no encontrado")
+            
+        return resultado
+        
+    except Exception as e:
+        print(f"❌ Error en obtenerProyectoPorId: {e}")
+        return None
+    finally:
+        try:
+            if 'cursor' in locals():
+                cursor.close()
+            if conexion and conexion.is_connected():
+                conexion.close()
+        except:
+            pass
+
+def actualizarProyecto(id, nombre, ubicacion, tipo_id):
+    """
+    Actualiza un proyecto existente
+    """
+    try:
+        conexion = connectionBD()
+        if not conexion:
+            print("❌ No hay conexión")
+            return False
+        
+        cursor = conexion.cursor()
+        
+        sql = """
+        UPDATE proyectos 
+        SET nombre = %s, ubicacion = %s, id = %s
+        WHERE id = %s
+        """
+        valores = (nombre, ubicacion, id, id)
+        
+        cursor.execute(sql, valores)
+        conexion.commit()
+        
+        print(f"✅ Proyecto ID {id} actualizado")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error al actualizar: {e}")
+        return False
+    finally:
+        try:
+            if 'cursor' in locals():
+                cursor.close()
+            if conexion and conexion.is_connected():
+                conexion.close()
+        except:
+            pass
+
+def eliminarProyecto(id):
+    """
+    Elimina un proyecto por su ID
+    """
+    try:
+        conexion = connectionBD()
+        if not conexion:
+            print("❌ No hay conexión")
+            return False
+        
+        cursor = conexion.cursor()
+        
+        sql = "DELETE FROM proyectos WHERE id = %s"
+        
+        cursor.execute(sql, (id,))
+        conexion.commit()
+        
+        if cursor.rowcount > 0:
+            print(f"✅ Proyecto ID {id} eliminado")
+            return True
+        else:
+            print(f"⚠️ Proyecto ID {id} no encontrado")
+            return False
+        
+    except Exception as e:
+        print(f"❌ Error al eliminar: {e}")
+        return False
     finally:
         try:
             if 'cursor' in locals():
